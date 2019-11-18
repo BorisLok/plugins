@@ -25,6 +25,7 @@ class GoogleMap extends StatefulWidget {
     Key key,
     @required this.initialCameraPosition,
     this.onMapCreated,
+    this.onMapReady,
     this.gestureRecognizers,
     this.compassEnabled = true,
     this.mapToolbarEnabled = true,
@@ -119,6 +120,8 @@ class GoogleMap extends StatefulWidget {
 
   /// Circles to be placed on the map.
   final Set<Circle> circles;
+
+  final VoidCallback onMapReady;
 
   /// Called when the camera starts moving.
   ///
