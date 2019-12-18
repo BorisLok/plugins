@@ -145,6 +145,11 @@ final class GoogleMapController
     updateInitialPolygons();
     updateInitialPolylines();
     updateInitialCircles();
+
+//    if (!_isMapReady) {
+//      _isMapReady = true;
+//      methodChannel.invokeMethod("map#ready", Collections.singletonMap("map", id));
+//    }
   }
 
   @Override
@@ -430,10 +435,6 @@ final class GoogleMapController
 
   @Override
   public void onCameraIdle() {
-    if (_isMapReady == false) {
-      _isMapReady = true;
-      methodChannel.invokeMethod("map#ready", Collections.singletonMap("map", id));
-    }
     methodChannel.invokeMethod("camera#onIdle", Collections.singletonMap("map", id));
   }
 
