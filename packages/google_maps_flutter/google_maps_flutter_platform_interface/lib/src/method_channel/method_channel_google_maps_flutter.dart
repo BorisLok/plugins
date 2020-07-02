@@ -5,11 +5,10 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
-
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:stream_transform/stream_transform.dart';
 
@@ -42,7 +41,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     if (!_channels.containsKey(mapId)) {
       channel = MethodChannel('plugins.flutter.io/google_maps_$mapId');
       channel.setMethodCallHandler(
-          (MethodCall call) => _handleMethodCall(call, mapId));
+              (MethodCall call) => _handleMethodCall(call, mapId));
       _channels[mapId] = channel;
     }
     return channel.invokeMethod<void>('map#waitForMap');
@@ -60,7 +59,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   // It is a `broadcast` because multiple controllers will connect to
   // different stream views of this Controller.
   final StreamController<MapEvent> _mapEventStreamController =
-      StreamController<MapEvent>.broadcast();
+  StreamController<MapEvent>.broadcast();
 
   // Returns a filtered view of the events in the _controller, by mapId.
   Stream<MapEvent> _events(int mapId) =>
@@ -121,6 +120,11 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     return _events(mapId).whereType<MapLongPressEvent>();
   }
 
+  @override
+  Stream<AnimateCameraCompletedEvent> animateCameraCompleted({@required int mapId}) {
+    return _events(mapId).whereType<AnimateCameraCompletedEvent>();
+  }
+
   Future<dynamic> _handleMethodCall(MethodCall call, int mapId) async {
     switch (call.method) {
       case 'camera#onMoveStarted':
@@ -134,6 +138,9 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
         break;
       case 'camera#onIdle':
         _mapEventStreamController.add(CameraIdleEvent(mapId));
+        break;
+      case 'camera#animationCompleted':
+        _mapEventStreamController.add(AnimateCameraCompletedEvent(mapId));
         break;
       case 'marker#onTap':
         _mapEventStreamController.add(MarkerTapEvent(
@@ -196,8 +203,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   ///
   /// The returned [Future] completes after listeners have been notified.
   @override
-  Future<void> updateMapOptions(
-    Map<String, dynamic> optionsUpdate, {
+  Future<void> updateMapOptions(Map<String, dynamic> optionsUpdate, {
     @required int mapId,
   }) {
     assert(optionsUpdate != null);
@@ -216,8 +222,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   ///
   /// The returned [Future] completes after listeners have been notified.
   @override
-  Future<void> updateMarkers(
-    MarkerUpdates markerUpdates, {
+  Future<void> updateMarkers(MarkerUpdates markerUpdates, {
     @required int mapId,
   }) {
     assert(markerUpdates != null);
@@ -234,8 +239,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   ///
   /// The returned [Future] completes after listeners have been notified.
   @override
-  Future<void> updatePolygons(
-    PolygonUpdates polygonUpdates, {
+  Future<void> updatePolygons(PolygonUpdates polygonUpdates, {
     @required int mapId,
   }) {
     assert(polygonUpdates != null);
@@ -252,8 +256,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   ///
   /// The returned [Future] completes after listeners have been notified.
   @override
-  Future<void> updatePolylines(
-    PolylineUpdates polylineUpdates, {
+  Future<void> updatePolylines(PolylineUpdates polylineUpdates, {
     @required int mapId,
   }) {
     assert(polylineUpdates != null);
@@ -270,8 +273,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   ///
   /// The returned [Future] completes after listeners have been notified.
   @override
-  Future<void> updateCircles(
-    CircleUpdates circleUpdates, {
+  Future<void> updateCircles(CircleUpdates circleUpdates, {
     @required int mapId,
   }) {
     assert(circleUpdates != null);
@@ -286,8 +288,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   /// The returned [Future] completes after the change has been started on the
   /// platform side.
   @override
-  Future<void> animateCamera(
-    CameraUpdate cameraUpdate, {
+  Future<void> animateCamera(CameraUpdate cameraUpdate, {
     @required int mapId,
     int animationSpeed,
   }) {
@@ -303,8 +304,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   /// The returned [Future] completes after the change has been made on the
   /// platform side.
   @override
-  Future<void> moveCamera(
-    CameraUpdate cameraUpdate, {
+  Future<void> moveCamera(CameraUpdate cameraUpdate, {
     @required int mapId,
   }) {
     return channel(mapId).invokeMethod<void>('camera#move', <String, dynamic>{
@@ -326,8 +326,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   /// and [Android](https://developers.google.com/maps/documentation/android-sdk/style-reference)
   /// style reference for more information regarding the supported styles.
   @override
-  Future<void> setMapStyle(
-    String mapStyle, {
+  Future<void> setMapStyle(String mapStyle, {
     @required int mapId,
   }) async {
     final List<dynamic> successAndError = await channel(mapId)
@@ -357,13 +356,12 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   /// Screen location is in screen pixels (not display pixels) with respect to the top left corner
   /// of the map, not necessarily of the whole screen.
   @override
-  Future<ScreenCoordinate> getScreenCoordinate(
-    LatLng latLng, {
+  Future<ScreenCoordinate> getScreenCoordinate(LatLng latLng, {
     @required int mapId,
   }) async {
     final Map<String, int> point = await channel(mapId)
         .invokeMapMethod<String, int>(
-            'map#getScreenCoordinate', latLng.toJson());
+        'map#getScreenCoordinate', latLng.toJson());
 
     return ScreenCoordinate(x: point['x'], y: point['y']);
   }
@@ -373,13 +371,12 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   /// Returned [LatLng] corresponds to a screen location. The screen location is specified in screen
   /// pixels (not display pixels) relative to the top left of the map, not top left of the whole screen.
   @override
-  Future<LatLng> getLatLng(
-    ScreenCoordinate screenCoordinate, {
+  Future<LatLng> getLatLng(ScreenCoordinate screenCoordinate, {
     @required int mapId,
   }) async {
     final List<dynamic> latLng = await channel(mapId)
         .invokeMethod<List<dynamic>>(
-            'map#getLatLng', screenCoordinate.toJson());
+        'map#getLatLng', screenCoordinate.toJson());
     return LatLng(latLng[0], latLng[1]);
   }
 
@@ -392,8 +389,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   ///   * [hideMarkerInfoWindow] to hide the Info Window.
   ///   * [isMarkerInfoWindowShown] to check if the Info Window is showing.
   @override
-  Future<void> showMarkerInfoWindow(
-    MarkerId markerId, {
+  Future<void> showMarkerInfoWindow(MarkerId markerId, {
     @required int mapId,
   }) {
     assert(markerId != null);
@@ -410,8 +406,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   ///   * [showMarkerInfoWindow] to show the Info Window.
   ///   * [isMarkerInfoWindowShown] to check if the Info Window is showing.
   @override
-  Future<void> hideMarkerInfoWindow(
-    MarkerId markerId, {
+  Future<void> hideMarkerInfoWindow(MarkerId markerId, {
     @required int mapId,
   }) {
     assert(markerId != null);
@@ -428,8 +423,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   ///   * [showMarkerInfoWindow] to show the Info Window.
   ///   * [hideMarkerInfoWindow] to hide the Info Window.
   @override
-  Future<bool> isMarkerInfoWindowShown(
-    MarkerId markerId, {
+  Future<bool> isMarkerInfoWindowShown(MarkerId markerId, {
     @required int mapId,
   }) {
     assert(markerId != null);
@@ -458,8 +452,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   /// The `mapId` is passed as a parameter from the framework on the
   /// `onPlatformViewCreated` callback.
   @override
-  Widget buildView(
-      Map<String, dynamic> creationParams,
+  Widget buildView(Map<String, dynamic> creationParams,
       Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers,
       PlatformViewCreatedCallback onPlatformViewCreated) {
     if (defaultTargetPlatform == TargetPlatform.android) {

@@ -4,6 +4,8 @@
 
 part of google_maps_flutter;
 
+typedef OnAnimationCompletedCallback = Future<void> Function();
+
 final GoogleMapsFlutterPlatform _googleMapsFlutterPlatform =
     GoogleMapsFlutterPlatform.instance;
 
@@ -12,11 +14,10 @@ class GoogleMapController {
   /// The mapId for this controller
   final int mapId;
 
-  GoogleMapController._(
-    CameraPosition initialCameraPosition,
-    this._googleMapState, {
-    @required this.mapId,
-  }) : assert(_googleMapsFlutterPlatform != null) {
+  GoogleMapController._(CameraPosition initialCameraPosition,
+      this._googleMapState, {
+        @required this.mapId,
+      }) : assert(_googleMapsFlutterPlatform != null) {
     _connectStreams(mapId);
   }
 
@@ -24,11 +25,9 @@ class GoogleMapController {
   ///
   /// Mainly for internal use when instantiating a [GoogleMapController] passed
   /// in [GoogleMap.onMapCreated] callback.
-  static Future<GoogleMapController> init(
-    int id,
-    CameraPosition initialCameraPosition,
-    _GoogleMapState googleMapState,
-  ) async {
+  static Future<GoogleMapController> init(int id,
+      CameraPosition initialCameraPosition,
+      _GoogleMapState googleMapState,) async {
     assert(id != null);
     await _googleMapsFlutterPlatform.init(id);
     return GoogleMapController._(
@@ -61,7 +60,7 @@ class GoogleMapController {
     }
     if (_googleMapState.widget.onCameraMove != null) {
       _googleMapsFlutterPlatform.onCameraMove(mapId: mapId).listen(
-          (CameraMoveEvent e) => _googleMapState.widget.onCameraMove(e.value));
+              (CameraMoveEvent e) => _googleMapState.widget.onCameraMove(e.value));
     }
     if (_googleMapState.widget.onCameraIdle != null) {
       _googleMapsFlutterPlatform
@@ -72,10 +71,10 @@ class GoogleMapController {
         .onMarkerTap(mapId: mapId)
         .listen((MarkerTapEvent e) => _googleMapState.onMarkerTap(e.value));
     _googleMapsFlutterPlatform.onMarkerDragEnd(mapId: mapId).listen(
-        (MarkerDragEndEvent e) =>
+            (MarkerDragEndEvent e) =>
             _googleMapState.onMarkerDragEnd(e.value, e.position));
     _googleMapsFlutterPlatform.onInfoWindowTap(mapId: mapId).listen(
-        (InfoWindowTapEvent e) => _googleMapState.onInfoWindowTap(e.value));
+            (InfoWindowTapEvent e) => _googleMapState.onInfoWindowTap(e.value));
     _googleMapsFlutterPlatform
         .onPolylineTap(mapId: mapId)
         .listen((PolylineTapEvent e) => _googleMapState.onPolylineTap(e.value));
@@ -89,7 +88,7 @@ class GoogleMapController {
         .onTap(mapId: mapId)
         .listen((MapTapEvent e) => _googleMapState.onTap(e.position));
     _googleMapsFlutterPlatform.onLongPress(mapId: mapId).listen(
-        (MapLongPressEvent e) => _googleMapState.onLongPress(e.position));
+            (MapLongPressEvent e) => _googleMapState.onLongPress(e.position));
   }
 
   /// Updates configuration options of the map user interface.
@@ -158,7 +157,11 @@ class GoogleMapController {
   ///
   /// The returned [Future] completes after the change has been started on the
   /// platform side.
-  Future<void> animateCamera(CameraUpdate cameraUpdate, {int animationSpeed = 2000}) {
+  Future<void> animateCamera(CameraUpdate cameraUpdate, {int animationSpeed = 2000, OnAnimationCompletedCallback onAnimationCompletedCallback}) {
+    _googleMapsFlutterPlatform.animateCameraCompleted(mapId: mapId).listen((event) {
+      print('animate camera completed');
+      onAnimationCompletedCallback?.call();
+    });
     return _googleMapsFlutterPlatform.animateCamera(cameraUpdate, mapId: mapId, animationSpeed: animationSpeed);
   }
 
