@@ -122,6 +122,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
   Future<void> animateCamera(
     CameraUpdate cameraUpdate, {
     @required int mapId,
+    int animationSpeed,
   }) {
     throw UnimplementedError('animateCamera() has not been implemented.');
   }
