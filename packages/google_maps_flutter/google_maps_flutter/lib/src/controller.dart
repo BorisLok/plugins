@@ -14,6 +14,8 @@ class GoogleMapController {
   /// The mapId for this controller
   final int mapId;
 
+  OnAnimationCompletedCallback _onAnimationCompletedCallback;
+
   GoogleMapController._(CameraPosition initialCameraPosition,
       this._googleMapState, {
         @required this.mapId,
@@ -53,6 +55,11 @@ class GoogleMapController {
   final _GoogleMapState _googleMapState;
 
   void _connectStreams(int mapId) {
+    _googleMapsFlutterPlatform
+        .onMapReady(mapId: mapId)
+        .listen((_) {
+      _googleMapState.widget.onMapReady?.call();
+    });
     if (_googleMapState.widget.onCameraMoveStarted != null) {
       _googleMapsFlutterPlatform
           .onCameraMoveStarted(mapId: mapId)
@@ -89,6 +96,11 @@ class GoogleMapController {
         .listen((MapTapEvent e) => _googleMapState.onTap(e.position));
     _googleMapsFlutterPlatform.onLongPress(mapId: mapId).listen(
             (MapLongPressEvent e) => _googleMapState.onLongPress(e.position));
+    _googleMapsFlutterPlatform.animateCameraCompleted(mapId: mapId).listen((event) {
+      print('on animation completed.');
+      _onAnimationCompletedCallback?.call();
+      _onAnimationCompletedCallback = null;
+    });
   }
 
   /// Updates configuration options of the map user interface.
@@ -158,10 +170,7 @@ class GoogleMapController {
   /// The returned [Future] completes after the change has been started on the
   /// platform side.
   Future<void> animateCamera(CameraUpdate cameraUpdate, {int animationSpeed = 2000, OnAnimationCompletedCallback onAnimationCompletedCallback}) {
-    _googleMapsFlutterPlatform.animateCameraCompleted(mapId: mapId).listen((event) {
-      print('animate camera completed');
-      onAnimationCompletedCallback?.call();
-    });
+    _onAnimationCompletedCallback = onAnimationCompletedCallback;
     return _googleMapsFlutterPlatform.animateCamera(cameraUpdate, mapId: mapId, animationSpeed: animationSpeed);
   }
 
@@ -271,6 +280,10 @@ class GoogleMapController {
 
   /// set google map padding.
   Future<void> setPadding({double top = 0, double left = 0, double bottom = 0, double right = 0}) {
-    return _googleMapsFlutterPlatform.setPadding(mapId: mapId, top: top, left: left, bottom: bottom, right: right);
+    return _googleMapsFlutterPlatform.setPadding(mapId: mapId,
+        top: top,
+        left: left,
+        bottom: bottom,
+        right: right);
   }
 }

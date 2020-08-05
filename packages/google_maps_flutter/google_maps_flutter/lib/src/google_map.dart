@@ -63,6 +63,8 @@ class GoogleMap extends StatefulWidget {
   /// Used to receive a [GoogleMapController] for this [GoogleMap].
   final MapCreatedCallback onMapCreated;
 
+  final VoidCallback onMapReady;
+
   /// The initial position of the map's camera.
   final CameraPosition initialCameraPosition;
 
@@ -120,8 +122,6 @@ class GoogleMap extends StatefulWidget {
 
   /// Circles to be placed on the map.
   final Set<Circle> circles;
-
-  final VoidCallback onMapReady;
 
   /// Called when the camera starts moving.
   ///
