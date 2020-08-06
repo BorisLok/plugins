@@ -244,6 +244,16 @@ final class GoogleMapController
         {
           final CameraUpdate cameraUpdate =
               Convert.toCameraUpdate(call.argument("cameraUpdate"), density);
+          final List<?> data = Convert.toList(call.argument("cameraUpdate"));
+          if (Convert.toString(data.get(0)).equals("newLatLngBoundsWithEdgeInsets")) {
+            final List<?> padding = Convert.toList(data.get(2));
+            setPadding(
+                    Convert.toFloat(padding.get(0)),
+                    Convert.toFloat(padding.get(1)),
+                    Convert.toFloat(padding.get(2)),
+                    Convert.toFloat(padding.get(3))
+            );
+          }
           moveCamera(cameraUpdate);
           result.success(null);
           break;
@@ -253,6 +263,16 @@ final class GoogleMapController
           final CameraUpdate cameraUpdate =
               Convert.toCameraUpdate(call.argument("cameraUpdate"), density);
           final int animationSpeed = (int) call.argument("animationSpeed");
+          final List<?> data = Convert.toList(call.argument("cameraUpdate"));
+          if (Convert.toString(data.get(0)).equals("newLatLngBoundsWithEdgeInsets")) {
+            final List<?> padding = Convert.toList(data.get(2));
+            setPadding(
+                    Convert.toFloat(padding.get(0)),
+                    Convert.toFloat(padding.get(1)),
+                    Convert.toFloat(padding.get(2)),
+                    Convert.toFloat(padding.get(3))
+            );
+          }
           animateCamera(cameraUpdate, animationSpeed);
           result.success(null);
           break;
@@ -403,14 +423,6 @@ final class GoogleMapController
                 "Unable to set the map style. Please check console logs for errors.");
           }
           result.success(mapStyleResult);
-          break;
-        }
-        case "map#setPadding": {
-          double top = (double)  call.argument("top");
-          double left = (double) call.argument("left");
-          double bottom = (double) call.argument("bottom");
-          double right = (double) call.argument("right");
-          setPadding((float) top, (float) left, (float) bottom, (float) right);
           break;
         }
       default:
