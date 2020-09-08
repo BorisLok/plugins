@@ -60,7 +60,6 @@ final class GoogleMapController
   private final GoogleMapOptions options;
   @Nullable private MapView mapView;
   private GoogleMap googleMap;
-  private boolean isGoogleMapReady = false;
   private boolean trackCameraPosition = false;
   private boolean myLocationEnabled = false;
   private boolean myLocationButtonEnabled = false;
@@ -160,11 +159,8 @@ final class GoogleMapController
     googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
       @Override
       public void onMapLoaded() {
-        if (!isGoogleMapReady) {
-          isGoogleMapReady = true;
-          Log.d("google map controller", "on Map ready: " + String.valueOf(id));
-          methodChannel.invokeMethod("map#ready", Collections.singletonMap("map", id));
-        }
+        Log.d("google map controller", "on Map ready: " + String.valueOf(id));
+        methodChannel.invokeMethod("map#ready", Collections.singletonMap("map", id));
       }
     });
   }
@@ -177,11 +173,8 @@ final class GoogleMapController
           googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {
-              if (!isGoogleMapReady) {
-                isGoogleMapReady = true;
-                Log.d("google map controller", "on Map ready: " + String.valueOf(id));
-                methodChannel.invokeMethod("map#ready", Collections.singletonMap("map", id));
-              }
+              Log.d("google map controller", "on Map ready: " + String.valueOf(id));
+              methodChannel.invokeMethod("map#ready", Collections.singletonMap("map", id));
             }
           });
           result.success(null);
