@@ -91,7 +91,6 @@ final class GoogleMapController
   private final Bitmap riderLeftStatus;
   private final Bitmap riderLostStatus;
   private final Bitmap riderPauseStatus;
-  private final Bitmap riderWeakSignalStatus;
 
   private List<LatLng> navigationPoints;
 
@@ -115,9 +114,8 @@ final class GoogleMapController
     this.circlesController = new CirclesController(methodChannel, density);
     this.mgr = context.getAssets();
     this.riderLeftStatus = MarkerIconPainter.getBitmapFromAsset(mgr, "common_app/assets/rider_left_png.png", density);
-    this.riderLostStatus = MarkerIconPainter.getBitmapFromAsset(mgr, "common_app/assets/rider_lost_png.png", density);
+    this.riderLostStatus = MarkerIconPainter.getBitmapFromAsset(mgr, "common_app/assets/rider_disconnected_png.png", density);
     this.riderPauseStatus = MarkerIconPainter.getBitmapFromAsset(mgr, "common_app/assets/rider_pause_png.png", density);
-    this.riderWeakSignalStatus = MarkerIconPainter.getBitmapFromAsset(mgr, "common_app/assets/rider_weak_signal_png.png", density);
   }
 
   @Override
