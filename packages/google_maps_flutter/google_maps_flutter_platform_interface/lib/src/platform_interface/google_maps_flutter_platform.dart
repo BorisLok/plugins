@@ -329,12 +329,8 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('addTrackingPoints() has not been implemented.');
   }
 
-  Future<void> vdUpdateRiderMarkers(Set<Marker> markers, {@required int mapId}) {
+  Future<void> updateDynamicMarkers(Set<Marker> markers, {@required int mapId}) {
     throw UnimplementedError('vdUpdateRiderMarkers() has not been implemented.');
-  }
-
-  Future<void> vdUpdateClusterMarkers(Set<Marker> markers, {@required int mapId}) {
-    throw UnimplementedError('updateClusterMarkers() has not been implemented.');
   }
 
   Future<void> vdRemoveMarkers(Set<MarkerId> markerIds, {@required int mapId}) {
@@ -347,5 +343,9 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
 
   Future<void> vdUpdateSelfMarker(Marker marker, {@required int mapId}) {
     throw UnimplementedError('vdUpdateSelfMarker() has not been implemented.');
+  }
+
+  Future<void> cluster({@required int mapId}) {
+    throw UnimplementedError("cluster has not been implemented.");
   }
 }

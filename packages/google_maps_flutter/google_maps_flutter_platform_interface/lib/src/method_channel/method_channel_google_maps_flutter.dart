@@ -513,14 +513,8 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     });
   }
 
-  Future<void> vdUpdateRiderMarkers(Set<Marker> markers, {@required int mapId}) {
-    return channel(mapId).invokeMethod<void>('map#updateRiderMarkers', {
-      'markers': serializeMarkerSet(markers),
-    });
-  }
-
-  Future<void> vdUpdateClusterMarkers(Set<Marker> markers, {@required int mapId}) {
-    return channel(mapId).invokeMethod<void>('map#updateClusterMarkers', {
+  Future<void> updateDynamicMarkers(Set<Marker> markers, {@required int mapId}) {
+    return channel(mapId).invokeMethod<void>('map#updateDynamicMarkers', {
       'markers': serializeMarkerSet(markers),
     });
   }
@@ -541,5 +535,9 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     return channel(mapId).invokeMethod<void>('map#updateMarker', {
       'markers': serializeMarkerSet({marker}),
     });
+  }
+
+  Future<void> cluster({@required int mapId}) {
+    return channel(mapId).invokeMethod<void>("map#cluster");
   }
 }
